@@ -1,0 +1,6 @@
+{
+  "appId": "com.senexpress.app",
+  "appName": "SenExpress",
+  "webDir": "www",
+  "bundledWebRuntime": false
+}
