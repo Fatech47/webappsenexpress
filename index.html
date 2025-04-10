@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SenExpress - Livraison Express</title>
   <!-- Feuille de styles principale -->
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/styles.css" />
+  <!-- Leaflet CSS pour la carte -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <!-- FontAwesome pour les icônes -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+        integrity="sha512-papNMUS1zfKxQgh4GQ4pFKq+6/9+zC6jqb6eRHi8/bsK2m+Q3iRR6ZtiE1O3O6kyo8+RiKxR+UA3Ej4Vf8X+ag==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <!-- (Optionnel) Widget Cloudinary pour l’upload -->
   <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
 </head>
 <body>
+  <!-- Toast de confirmation -->
+  <div id="toast" class="toast">Inscription réussie !</div>
+
   <!-- En-tête : logo, titre et basculeur de thème -->
   <header role="banner">
     <div class="header-container">
       <a href="index.html">
-        <img src="assets/logo.png" alt="Logo SenExpress" class="logo">
+        <img src="assets/logo.png" alt="Logo SenExpress" class="logo" />
       </a>
       <h1>SenExpress</h1>
       <button id="toggleTheme" aria-label="Basculer entre le mode clair et sombre">
@@ -28,6 +36,7 @@
     <ul class="nav-links">
       <li><a href="#homeSection">Accueil</a></li>
       <li><a href="#livreursSection">Livreurs</a></li>
+      <li><a href="#dashboardSection">Tableau de bord</a></li>
     </ul>
   </nav>
 
@@ -43,10 +52,24 @@
   <!-- Section Liste des livreurs -->
   <section id="livreursSection">
     <h2>Livreurs Disponibles</h2>
+    <!-- Barre de recherche -->
+    <input type="text" id="searchDrivers" placeholder="Rechercher un livreur…" oninput="updateDriversList(this.value)" />
     <div id="driversList" class="drivers-list"></div>
+    <!-- Pagination -->
+    <div id="pagination" class="pagination"></div>
     <div class="btn-container">
-      <button onclick="showModal('registrationModal')">Devenir Livreur</button>
+      <button onclick="showModal('registrationModal')" class="action-btn">Devenir Livreur</button>
     </div>
+    <!-- Carte interactive affichant les positions réelles des livreurs -->
+    <div id="mapContainer" class="map-container"></div>
+  </section>
+
+  <!-- Tableau de bord -->
+  <section id="dashboardSection">
+    <h2>Tableau de bord - Historique des livreurs</h2>
+    <!-- Barre de recherche pour le tableau de bord -->
+    <input type="text" id="searchDashboard" placeholder="Rechercher dans l'historique…" oninput="updateDashboard(this.value)" />
+    <div id="dashboardList" class="dashboard-list"></div>
   </section>
 
   <!-- Modal d'inscription -->
@@ -55,25 +78,31 @@
       <span class="close-modal" onclick="closeModal('registrationModal')" aria-label="Fermer">&times;</span>
       <h2>Inscription Livreur</h2>
       <form id="driverForm" onsubmit="event.preventDefault(); processRegistration();">
-        <input type="text" id="driverName" placeholder="Nom complet" required>
-        <input type="text" id="driverVehicle" placeholder="Véhicule" required>
-        <input type="number" id="driverPrice" placeholder="Prix (FCFA)" required>
-        <input type="tel" id="driverPhone" placeholder="Téléphone" required>
-        <button type="submit">S'inscrire et Payer</button>
+        <input type="text" id="driverName" placeholder="Nom complet" required />
+        <input type="text" id="driverVehicle" placeholder="Véhicule" required />
+        <input type="number" id="driverPrice" placeholder="Prix (FCFA)" required />
+        <input type="tel" id="driverPhone" placeholder="Téléphone" required />
+        <button type="submit" class="action-btn">S'inscrire et Payer</button>
       </form>
     </div>
   </div>
 
-  <!-- Modal de paiement (QR code statique) -->
+  <!-- Modal de paiement (QR code statique + montant affiché) -->
   <div id="paymentModal" class="modal" role="dialog" aria-modal="true">
-    <div class="modal-content animate-modal">
+    <div class="modal-content animate-modal payment-content">
       <span class="close-modal" onclick="closeModal('paymentModal')" aria-label="Fermer">&times;</span>
-      <img src="assets/wave_qr.png" alt="QR Code Paiement">
-      <button onclick="confirmPayment()">J'ai payé</button>
+      <img src="assets/wave_qr.png" alt="QR Code Paiement" class="qr" />
+      <div class="payment-info">
+        <span>Montant à payer :</span>
+        <span class="price">2000 FCFA</span>
+      </div>
+      <button onclick="confirmPayment()" class="action-btn">J'ai payé</button>
     </div>
   </div>
 
-  <!-- Inclusion du fichier JavaScript principal -->
+  <!-- Inclusion des scripts JavaScript -->
+  <!-- Leaflet JS pour la carte -->
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
